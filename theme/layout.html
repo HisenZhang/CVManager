@@ -8,6 +8,8 @@
     <style type="text/css">
         @media screen {
             .container {
+                margin-left: auto;
+                margin-right: auto;
                 background-color: #ffffff;
                 max-width: 600pt;
                 padding: 0;
@@ -33,6 +35,12 @@
             font-family: "Times New Roman";
             color: #000000;
             display: block;
+        }
+
+        ul {
+            margin-top: 5pt;
+            margin-bottom: 5pt;
+            padding-left: 30pt;
         }
         
         td {
@@ -70,8 +78,8 @@
 
         <p style="padding-left: 80px;">
             <span style="text-transform: uppercase">
-            <span style="font-size:48px;">{{person.name.first[0]}}</span><span style="font-size:42px;">{{person.name.first[1:]}}</span>
-            <span style="font-size:48px;">{{person.name.last[0]}}</span><span style="font-size:42px;">{{person.name.last[1:]}}</span>
+            <span style="font-size:48px;">{{person.name.first[0]}}</span><span style="font-size:40px;">{{person.name.first[1:]}}</span>
+            <span style="font-size:48px;">{{person.name.last[0]}}</span><span style="font-size:40px;">{{person.name.last[1:]}}</span>
             </span>
             <br>{{person.name.handle}} / {{person.name.call}} / {% if profile.email %}{{profile.email}}{% else %}{{person.email.work}}{% endif %}
         </p>
@@ -81,11 +89,10 @@
 
         <h2>Education</h2>
 
-        {% for edu in exp.education %}
-
         <table>
             <tbody>
-                <tr>
+                {% for edu in exp.education %}
+                <tr>                            
                     <td valign="top" width="50px">
                         <p><b>{{edu.type}}</b></p>
                     </td>
@@ -97,17 +104,16 @@
                         {% endfor %}
                     </td>
                 </tr>
+                {% endfor %}
             </tbody>
         </table>
 
-        {% endfor %}
 
         <h2>Publication</h2>
 
-        {% for pub in exp.publication %}
-
         <table>
             <tbody>
+                {% for pub in exp.publication %}
                 <tr>
                     <td valign="top" width="75px">
                         <p>{{loop.revindex}}.</p>
@@ -116,17 +122,16 @@
                         <p style="text-indent:-1.5em">{% for author in pub.authors %}{% if person.name.last in author and person.name.first in author %}<b>{{author}}, </b>{% else %}{{author}}, {% endif %}{% endfor %} <i>"{{pub.title}}."</i> {{pub.publisher}}, {{pub.date}}.</p>
                     </td>
                 </tr>
+                {% endfor %}
             </tbody>
         </table>
 
-        {% endfor %}
 
         <h2>Research Experience</h2>
 
-        {% for research in exp.research %}
-
         <table>
             <tbody>
+                {% for research in exp.research %}
                 <tr>
                     <td valign="top" width="120px">
                         <p><b>{{research.timeframe}}</b></p>
@@ -137,17 +142,16 @@
                         <p>Supervised by {{research.supervisor}}</p>
                     </td>
                 </tr>
+                {% endfor %}
             </tbody>
         </table>
+        
 
-        {% endfor %}
-
-        <h2>Teaching Experience</h2>
-
-        {% for teaching in exp.teaching %}
+        <h2>Teaching Experience</h2>    
 
         <table>
             <tbody>
+                {% for teaching in exp.teaching %}
                 <tr>
                     <td valign="top" width="120px">
                         <p><b>{{teaching.timeframe}}</b></p>
@@ -157,17 +161,16 @@
                         <p>{{teaching.role}}, {{teaching.organization}}, {{teaching.location}}</p>
                     </td>
                 </tr>
+                {% endfor %}
             </tbody>
         </table>
 
-        {% endfor %}
 
         <h2>University Service</h2>
 
-        {% for service in exp.service %}
-
         <table>
             <tbody>
+                {% for service in exp.service %}
                 <tr>
                     <td valign="top" width="120px">
                         <p><b>{{service.timeframe}}</b></p>
@@ -176,17 +179,16 @@
                         <p>{{service.role}}, {{service.organization}}</p>
                     </td>
                 </tr>
+                {% endfor %}
             </tbody>
         </table>
 
-        {% endfor %}
 
-        <h2>Invited Talks</h2>
-
-        {% for pre in exp.presentation %}
+        <h2>Invited Talks</h2>        
 
         <table>
             <tbody>
+                {% for pre in exp.presentation %}
                 <tr>
                     <td valign="top" width="50px">
                         <p><b>{{pre.year}}</b></p>
@@ -211,17 +213,16 @@
                         {% endif %}
                     </td>
                 </tr>
+                {% endfor %}
             </tbody>
         </table>
 
-        {% endfor %}
 
-        <h2>Honor Societies</h2>
-
-        {% for society in exp.societies %}
+        <h2>Honor Societies</h2>        
 
         <table>
             <tbody>
+                {% for society in exp.societies %}
                 <tr>
                     <td valign="top" width="50px">
                         <p><b>{{society.year}}</b></p>
@@ -230,19 +231,20 @@
                         <p>{{society.organization}}</p>
                     </td>
                 </tr>
+                {% endfor %}
             </tbody>
         </table>
 
-        {% endfor %}
 
         <h2>Projects</h2>
 
-        <p>Project details and documentation: <a href="{{exp.project.url}}">{{exp.project.url}}</a></p>
-
-        {% for proj in exp.project.entries %}
-
+        <p style="text-align: center;"><i>- Details and documentation: <a href="{{exp.project.url}}">{{exp.project.url}}</a> -</i></p>
+        <br>
+            
         <table>
             <tbody>
+                {% for proj in exp.project.entries %}
+                {% if proj.priority <= profile.verbosity %}
                 <tr>
                     <td valign="top" width="50px">
                         <p><b>{{proj.year}}</b></p>
@@ -263,17 +265,17 @@
 
                     </td>
                 </tr>
+                {% endif %}
+                {% endfor %}        
             </tbody>
         </table>
 
-        {% endfor %}
 
-        <h2>Professional Affiliations</h2>
-
-        {% for aff in exp.affiliation %}
+        <h2>Professional Affiliations</h2>        
 
         <table>
             <tbody>
+                {% for aff in exp.affiliation %}
                 <tr>
                     <td valign="top" width="50px">
                         <p><b>{{aff.year}}</b></p>
@@ -282,13 +284,17 @@
                         <p>{{aff.organization}}</p>
                     </td>
                 </tr>
+                {% endfor %}  
             </tbody>
         </table>
-
-        {% endfor %}
-
-        <br> {% endblock %}
+                       
+        {% endblock %}
     </div>
 </body>
+<footer>
+    <br>
+    <p style="text-align: center; font-size: 14px;"><i>- Last update {{ utcnow }} -</i></p>
+    <br>
+</footer>
 
 </html>
