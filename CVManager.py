@@ -2,6 +2,7 @@ import os
 import sys
 import pprint
 import base64
+import datetime
 from yamldb import YamlDB
 
 if len(sys.argv) != 2:
@@ -30,6 +31,7 @@ def render_html(db):
     template_file = "layout.html"
     template = template_env.get_template(template_file)
     html_string = template.render(
+        utcnow= datetime.datetime.now(datetime.timezone.utc).isoformat(),
         profile=profile,
         person=db['contact'],
         exp=db['experience'],
