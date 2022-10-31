@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Hisen</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style type="text/css">
+        @media screen {
+            .container {
+                background-color: #ffffff;
+                max-width: 600pt;
+                padding: 0;
+            }
+        }
+        
+        @media print {
+            .container {
+                background-color: #ffffff;
+                max-width: 8.5in;
+                padding: 0.8in;
+            }
+        }
+        
+        body {
+            display: block;
+            margin: 8px;
+        }
+        
+        p {
+            margin: 0;
+            font-size: 14.5pt;
+            font-family: "Times New Roman";
+            color: #000000;
+            display: block;
+        }
+        
+        td {
+            padding: 5pt;
+            border-color: #ffffff;
+            border-width: 1pt;
+            border-style: solid;
+        }
+        
+        h2 {
+            font-family: "Times New Roman";
+            color: #000000;
+            font-weight: 400;
+            font-size: 20pt;
+            padding-top: 18pt;
+            padding-bottom: 6pt;
+            margin-top: 6pt;
+            margin-bottom: 6pt;
+            line-height: 1.0;
+            page-break-after: avoid;
+            orphans: 2;
+            widows: 2;
+            text-align: left;
+            text-transform: uppercase
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+
+        <br>
+
+        <img src="data:image/png;base64,{{ img_string }}" width="80px" height="auto" style="float: left; margin: 2px; margin-right: 20px; margin-left: 0;">
+
+        <p style="padding-left: 80px;">
+            <span style="text-transform: uppercase">
+            <span style="font-size:48px;">{{person.name.first[0]}}</span><span style="font-size:42px;">{{person.name.first[1:]}}</span>
+            <span style="font-size:48px;">{{person.name.last[0]}}</span><span style="font-size:42px;">{{person.name.last[1:]}}</span>
+            </span>
+            <br>{{person.name.handle}} / {{person.name.call}} / {% if profile.email %}{{profile.email}}{% else %}{{person.email.work}}{% endif %}
+        </p>
+
+
+        {% block body %}
+
+        <h2>Education</h2>
+
+        {% for edu in exp.education %}
+
+        <table>
+            <tbody>
+                <tr>
+                    <td valign="top" width="50px">
+                        <p><b>{{edu.type}}</b></p>
+                    </td>
+                    <td valign="top">
+                        <p>{{edu.concentration}}, {{edu.organization}}, {{edu.location}}</p>
+                        <p>{{edu.date}}</p>
+                        {% for h in edu.honors %}
+                        <p>{{h}}</p>
+                        {% endfor %}
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        {% endfor %}
+
+        <h2>Publication</h2>
+
+        {% for pub in exp.publication %}
+
+        <table>
+            <tbody>
+                <tr>
+                    <td valign="top" width="75px">
+                        <p>{{loop.revindex}}.</p>
+                    </td>
+                    <td valign="top">
+                        <p style="text-indent:-1.5em">{% for author in pub.authors %}{% if person.name.last in author and person.name.first in author %}<b>{{author}}, </b>{% else %}{{author}}, {% endif %}{% endfor %} <i>"{{pub.title}}."</i> {{pub.publisher}}, {{pub.date}}.</p>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        {% endfor %}
+
+        <h2>Research Experience</h2>
+
+        {% for research in exp.research %}
+
+        <table>
+            <tbody>
+                <tr>
+                    <td valign="top" width="120px">
+                        <p><b>{{research.timeframe}}</b></p>
+                    </td>
+                    <td valign="top">
+                        <p>{{research.role}}, {{research.lab}}</p>
+                        <p>{{research.institute}}</p>
+                        <p>Supervised by {{research.supervisor}}</p>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        {% endfor %}
+
+        <h2>Teaching Experience</h2>
+
+        {% for teaching in exp.teaching %}
+
+        <table>
+            <tbody>
+                <tr>
+                    <td valign="top" width="120px">
+                        <p><b>{{teaching.timeframe}}</b></p>
+                    </td>
+                    <td valign="top">
+                        <p><i>{{teaching.course}}</i></p>
+                        <p>{{teaching.role}}, {{teaching.organization}}, {{teaching.location}}</p>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        {% endfor %}
+
+        <h2>University Service</h2>
+
+        {% for service in exp.service %}
+
+        <table>
+            <tbody>
+                <tr>
+                    <td valign="top" width="120px">
+                        <p><b>{{service.timeframe}}</b></p>
+                    </td>
+                    <td valign="top">
+                        <p>{{service.role}}, {{service.organization}}</p>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        {% endfor %}
+
+        <h2>Invited Talks</h2>
+
+        {% for pre in exp.presentation %}
+
+        <table>
+            <tbody>
+                <tr>
+                    <td valign="top" width="50px">
+                        <p><b>{{pre.year}}</b></p>
+                    </td>
+                    <td valign="top">
+
+                        {% if pre.occasion|length > 1 %}
+
+                        <p><i>"{{pre.title}}."</i>
+                            <ul>{% for case in pre.occasion %}
+                                <li>
+                                    <p>{{case.location}}. {{case.date}}.</p>
+                                </li>
+                                {% endfor %}
+                            </ul>
+                        </p>
+
+                        {% elif pre.occasion|length == 1 %}
+
+                        <p><i>"{{pre.title}}."</i> {{pre.occasion[0].location}}. {{pre.occasion[0].date}}.</p>
+
+                        {% endif %}
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        {% endfor %}
+
+        <h2>Honor Societies</h2>
+
+        {% for society in exp.societies %}
+
+        <table>
+            <tbody>
+                <tr>
+                    <td valign="top" width="50px">
+                        <p><b>{{society.year}}</b></p>
+                    </td>
+                    <td valign="top">
+                        <p>{{society.organization}}</p>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        {% endfor %}
+
+        <h2>Projects</h2>
+
+        <p>Project details and documentation: <a href="{{exp.project.url}}">{{exp.project.url}}</a></p>
+
+        {% for proj in exp.project.entries %}
+
+        <table>
+            <tbody>
+                <tr>
+                    <td valign="top" width="50px">
+                        <p><b>{{proj.year}}</b></p>
+                    </td>
+                    <td valign="top">
+                        <p><i>"{{proj.title}}."</i> {{proj.timeframe}}
+                            <ul>{% for digest in proj.digest %}
+                                <li>
+                                    <p>{{digest}}</p>
+                                </li>
+                                {% endfor %} {% if proj.url %}
+                                <li>
+                                    <p><a href="{{proj.url}}">{{proj.url}}</a></p>
+                                </li>
+                                {% endif %}
+                            </ul>
+                        </p>
+
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        {% endfor %}
+
+        <h2>Professional Affiliations</h2>
+
+        {% for aff in exp.affiliation %}
+
+        <table>
+            <tbody>
+                <tr>
+                    <td valign="top" width="50px">
+                        <p><b>{{aff.year}}</b></p>
+                    </td>
+                    <td valign="top">
+                        <p>{{aff.organization}}</p>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        {% endfor %}
+
+        <br> {% endblock %}
+    </div>
+</body>
+
+</html>
