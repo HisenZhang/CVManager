@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title>Hisen</title>
+    <title>{{ profile.output.filename }}</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style type="text/css">
@@ -210,14 +210,14 @@
             <tbody>
                 {% for pre in exp.presentation %}
                 <tr>
-                    <td valign="top" width="50px">
+                    <td valign="top" width="80px">
                         <p><b>{{pre.year}}</b></p>
                     </td>
                     <td valign="top">
 
                         {% if pre.occasion|length > 1 %}
 
-                        <p><i>"{{pre.title}}."</i>
+                        <p style="text-indent:-1.5em"><i>"{{pre.title}}."</i>
                             <ul>{% for case in pre.occasion %}
                                 <li>
                                     <p>{{case.location}}. {{case.date}}.</p>
@@ -228,7 +228,7 @@
 
                         {% elif pre.occasion|length == 1 %}
 
-                        <p><i>"{{pre.title}}."</i> {{pre.occasion[0].location}}. {{pre.occasion[0].date}}.</p>
+                        <p style="text-indent:-1.5em"><i>"{{pre.title}}."</i> {{pre.occasion[0].location}}. {{pre.occasion[0].date}}.</p>
 
                         {% endif %}
                     </td>
@@ -272,7 +272,8 @@
                             <p><b>{{proj.year}}</b></p>
                         </td>
                         <td valign="top">
-                            <p><i>"{{proj.title}}."</i> {{proj.timeframe}}
+                            <p>
+                                <i>"{{proj.title}}."</i> {{proj.timeframe}}
                                 <ul>{% for digest in proj.digest %}
                                     <li>
                                         <p>{{digest}}</p>
@@ -320,11 +321,11 @@
             <tbody>
                 {% for cert in exp.certificate %}
                 <tr>
-                    <td valign="top" width="50px">
-                        <p><b>{{ loop.revindex }}</b></p>
+                    <td valign="top" width="80px">
+                        <p>{{ loop.revindex }}.</p>
                     </td>
                     <td valign="top">
-                        <p>
+                        <p style="text-indent:-1.5em">
                             <span><i>"{{ cert.title }},"</i> {{ cert.issuer }}. </span>
                             <span>Effective since {{ cert.date.effective }}. </span>
                             {% if cert.date.expire %}
