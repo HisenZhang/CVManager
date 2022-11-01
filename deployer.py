@@ -6,6 +6,8 @@ class DeployerFactory:
         pass
 
     def createDeployers(self,dest):
+        if dest is None:
+            return None
         deployers = dict()        
         if 'GoogleDrive' in dest:
             from deployer import GoogleDriveDeployer

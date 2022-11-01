@@ -21,6 +21,8 @@ class RendererFactory:
             self.profile['output.path'], time_dir, self.profile['output.filename'] + ' - ' + ts)
 
     def createRenderers(self,outputTypes):
+        if outputTypes is None:
+            return None
         outpath = self.buildSubDir()
         renderers = dict()
         for o in set(outputTypes):
