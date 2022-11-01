@@ -78,8 +78,10 @@
 
         <p style="padding-left: 80px;">
             <span style="text-transform: uppercase">
-            <span style="font-size:48px;">{{person.name.first[0]}}</span><span style="font-size:40px;">{{person.name.first[1:]}}</span>
-            <span style="font-size:48px;">{{person.name.last[0]}}</span><span style="font-size:40px;">{{person.name.last[1:]}}</span>
+            <span style="font-size:48px;">{{person.name.first[0]}}</span>
+            <span style="font-size:40px;">{{person.name.first[1:]}}</span>
+            <span style="font-size:48px;">{{person.name.last[0]}}</span>
+            <span style="font-size:40px;">{{person.name.last[1:]}}</span>
             </span>
             <br>{{person.name.handle}} / {{person.name.call}} / {% if profile.email %}{{profile.email}}{% else %}{{person.email.work}}{% endif %}
         </p>
@@ -122,7 +124,18 @@
                         <p>{{loop.revindex}}.</p>
                     </td>
                     <td valign="top">
-                        <p style="text-indent:-1.5em">{% for author in pub.authors %}{% if person.name.last in author and person.name.first in author %}<b>{{author}}, </b>{% else %}{{author}}, {% endif %}{% endfor %} <i>"{{pub.title}}."</i> {{pub.publisher}}, {{pub.date}}.</p>
+                        <p style="text-indent:-1.5em">
+                            <span>
+                                {% for author in pub.authors %}
+                                    {% if person.name.last in author and person.name.first in author %}
+                                        <b>{{author}}, </b>
+                                    {% else %}
+                                        {{author}}, 
+                                    {% endif %}
+                                {% endfor %} 
+                            </span>
+                            <span><i>"{{pub.title}}."</i> {{pub.publisher}}, {{pub.date}}.</span>
+                        </p>
                     </td>
                 </tr>
                 {% endfor %}
@@ -253,28 +266,29 @@
         <table>
             <tbody>
                 {% for proj in exp.project.entries %}
-                {% if proj.priority <= profile.verbosity %}
-                <tr>
-                    <td valign="top" width="50px">
-                        <p><b>{{proj.year}}</b></p>
-                    </td>
-                    <td valign="top">
-                        <p><i>"{{proj.title}}."</i> {{proj.timeframe}}
-                            <ul>{% for digest in proj.digest %}
-                                <li>
-                                    <p>{{digest}}</p>
-                                </li>
-                                {% endfor %} {% if proj.url %}
-                                <li>
-                                    <p><a href="{{proj.url}}">{{proj.url}}</a></p>
-                                </li>
-                                {% endif %}
-                            </ul>
-                        </p>
+                    {% if proj.priority <= profile.verbosity %}
+                    <tr>
+                        <td valign="top" width="50px">
+                            <p><b>{{proj.year}}</b></p>
+                        </td>
+                        <td valign="top">
+                            <p><i>"{{proj.title}}."</i> {{proj.timeframe}}
+                                <ul>{% for digest in proj.digest %}
+                                    <li>
+                                        <p>{{digest}}</p>
+                                    </li>
+                                    {% endfor %} 
+                                    {% if proj.url %}
+                                    <li>
+                                        <p><a href="{{proj.url}}">{{proj.url}}</a></p>
+                                    </li>
+                                    {% endif %}
+                                </ul>
+                            </p>
 
-                    </td>
-                </tr>
-                {% endif %}
+                        </td>
+                    </tr>
+                    {% endif %}
                 {% endfor %}        
             </tbody>
         </table>
