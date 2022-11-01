@@ -298,6 +298,33 @@
             </tbody>
         </table>
         {% endif %}
+
+        {% if sec == 'certificate' %}
+        <h2>Licenses and Certificates</h2>        
+
+        <table>
+            <tbody>
+                {% for cert in exp.certificate %}
+                <tr>
+                    <td valign="top" width="50px">
+                        <p><b>{{ loop.revindex }}</b></p>
+                    </td>
+                    <td valign="top">
+                        <p>
+                            <span><i>"{{ cert.title }},"</i> {{ cert.issuer }}. </span>
+                            <span>Effective since {{ cert.date.effective }}. </span>
+                            {% if cert.date.expire %}
+                            <span>
+                                Expiration date {{ cert.date.expire }}.
+                            </span>
+                            {% endif %}
+                        </p>
+                    </td>
+                </tr>
+                {% endfor %}  
+            </tbody>
+        </table>
+        {% endif %}
         {% endfor %}
                        
         {% endblock %}
