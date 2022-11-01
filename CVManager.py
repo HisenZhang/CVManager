@@ -75,7 +75,7 @@ if outputs is not None:
     except FileExistsError:
         pass
     outpath = os.path.join(
-        profile['output.path'], time_dir, profile['output.filename']+ ' ' +ts)
+        profile['output.path'], time_dir, profile['output.filename'] + ' - ' + ts)
 
 if 'HTML' in outputs:
     import jinja2
