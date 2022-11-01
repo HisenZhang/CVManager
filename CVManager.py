@@ -19,13 +19,13 @@ output_types = profile['output.type']
 renderers = RendererFactory(profile).createRenderers(output_types)
 type_path = dict()
 if renderers:
-    for type,renderer in renderers.items():
-        type_path[type] = renderer.render(db,profile,now)
+    for type, renderer in renderers.items():
+        type_path[type] = renderer.render(db, profile, now)
 
 
 deployment = profile['deploy']
 deployers = DeployerFactory(profile).createDeployers(deployment)
 if deployers:
-    for dest,deployer in deployers.items():
+    for dest, deployer in deployers.items():
         deployer.trashOldFiles(profile['output.filename'])
-        deployer.deploy(profile,type_path)
+        deployer.deploy(profile, type_path)
