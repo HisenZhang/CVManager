@@ -87,6 +87,8 @@
 
         {% block body %}
 
+        {% for sec in profile.section %}
+        {% if sec == 'education' %}
         <h2>Education</h2>
 
         <table>
@@ -107,8 +109,9 @@
                 {% endfor %}
             </tbody>
         </table>
+        {% endif %}
 
-
+        {% if sec == 'publication' %}
         <h2>Publication</h2>
 
         <table>
@@ -125,8 +128,9 @@
                 {% endfor %}
             </tbody>
         </table>
+        {% endif %}
 
-
+        {% if sec == 'research' %}
         <h2>Research Experience</h2>
 
         <table>
@@ -145,8 +149,9 @@
                 {% endfor %}
             </tbody>
         </table>
+        {% endif %}
         
-
+        {% if sec == 'teaching' %}
         <h2>Teaching Experience</h2>    
 
         <table>
@@ -164,8 +169,9 @@
                 {% endfor %}
             </tbody>
         </table>
+        {% endif %}
 
-
+        {% if sec == 'service' %}
         <h2>University Service</h2>
 
         <table>
@@ -182,8 +188,9 @@
                 {% endfor %}
             </tbody>
         </table>
+        {% endif %}
 
-
+        {% if sec == 'presentation' %}
         <h2>Invited Talks</h2>        
 
         <table>
@@ -216,8 +223,9 @@
                 {% endfor %}
             </tbody>
         </table>
+        {% endif %}
 
-
+        {% if sec == 'societies' %}
         <h2>Honor Societies</h2>        
 
         <table>
@@ -234,8 +242,9 @@
                 {% endfor %}
             </tbody>
         </table>
+        {% endif %}
 
-
+        {% if sec == 'project' %}
         <h2>Projects</h2>
 
         <p style="text-align: center;"><i>- Details and documentation: <a href="{{exp.project.url}}">{{exp.project.url}}</a> -</i></p>
@@ -269,8 +278,9 @@
                 {% endfor %}        
             </tbody>
         </table>
+        {% endif %}
 
-
+        {% if sec == 'affiliation' %}
         <h2>Professional Affiliations</h2>        
 
         <table>
@@ -287,6 +297,8 @@
                 {% endfor %}  
             </tbody>
         </table>
+        {% endif %}
+        {% endfor %}
                        
         {% endblock %}
     </div>
