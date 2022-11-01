@@ -65,7 +65,7 @@ class HTMLRenderer(BaseRenderer):
             html_file.write(html_string)
             html_file.close()
 
-            return self.outpath+'.pdf'
+            return self.outpath+'.html'
 
         else:
             return html_string

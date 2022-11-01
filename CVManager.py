@@ -1,11 +1,8 @@
 import os
 import sys
-import pprint
-import base64
 import datetime
 from yamldb import YamlDB
 from deployer import DeployerFactory
-
 from renderer import RendererFactory
 
 if len(sys.argv) != 2:
