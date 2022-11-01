@@ -133,3 +133,7 @@ asset
 
 # output directory
 build
+
+# credentials
+client_secrets.json
+google_drive.cred
