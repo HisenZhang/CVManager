@@ -1,13 +1,15 @@
 import jinja2
 import pdfkit
+import imgkit
 import os
 import sys
 from utility import img2b64
 import datetime
 
+
 class RendererFactory:
-    def __init__(self,profile):
-        self.profile=profile
+    def __init__(self, profile):
+        self.profile = profile
         pass
 
     def buildSubDir(self):
@@ -20,32 +22,34 @@ class RendererFactory:
         return os.path.join(
             self.profile['output.path'], time_dir, self.profile['output.filename'] + ' - ' + ts)
 
-    def createRenderers(self,outputTypes):
+    def createRenderers(self, outputTypes):
         if outputTypes is None:
             return None
         outpath = self.buildSubDir()
         renderers = dict()
         for o in set(outputTypes):
             if 'HTML' == o:
-                from renderer import HTMLRenderer
-                renderers[o] = HTMLRenderer(outpath)              
+                renderers[o] = HTMLRenderer(outpath)
             elif 'PDF' == o:
-                from renderer import PDFRenderer
                 renderers[o] = PDFRenderer(outpath)
+            elif 'PNG' == o:
+                renderers[o] = PNGRenderer(outpath)
             else:
-                print('Unknown type ignored:',o)            
+                print('Unknown type ignored:', o)
         return renderers
+
 
 class BaseRenderer:
     def __init__(self, outpath):
         self.outpath = outpath
         pass
 
-    def render(self,data,path,time):
+    def render(self, data, path, time):
         pass
 
+
 class HTMLRenderer(BaseRenderer):
-    def __init__(self,outpath):         
+    def __init__(self, outpath):
         super().__init__(outpath)
 
     def render(self, db, profile, time):
@@ -60,7 +64,7 @@ class HTMLRenderer(BaseRenderer):
             exp=db['experience'],
             img_string=img2b64(os.path.join(
                 profile['input.path'], profile['input.logo'])))
-        
+
         if self.outpath:
             html_path = self.outpath+'.html'
             html_file = open(html_path, 'w')
@@ -72,11 +76,32 @@ class HTMLRenderer(BaseRenderer):
         else:
             return html_string
 
-class PDFRenderer(BaseRenderer):
-    def __init__(self,outpath):               
+
+class PNGRenderer(BaseRenderer):
+    def __init__(self, outpath):
         super().__init__(outpath)
 
-    def render(self, db, profile,time):
+    def render(self, db, profile, time):
+        path_to_wkhtmltoimg = r'C:\Program Files\wkhtmltopdf\bin\wkhtmltoimage.exe'
+        config = imgkit.config(wkhtmltoimage=path_to_wkhtmltoimg)
+        options = {
+            'encoding': 'UTF-8',
+            'quality': '70',
+            'quiet': ''
+        }
+
+        html_string = HTMLRenderer(None).render(db, profile, time)
+        imgkit.from_string(html_string, output_path=self.outpath+'.png',
+                           config=config, options=options)
+
+        return self.outpath+'.pdf'
+
+
+class PDFRenderer(BaseRenderer):
+    def __init__(self, outpath):
+        super().__init__(outpath)
+
+    def render(self, db, profile, time):
         path_to_wkhtmltopdf = r'C:\Program Files\wkhtmltopdf\bin\wkhtmltopdf.exe'
         config = pdfkit.configuration(wkhtmltopdf=path_to_wkhtmltopdf)
         options = {
@@ -89,9 +114,8 @@ class PDFRenderer(BaseRenderer):
             "dpi": "300",
         }
 
-
         html_string = HTMLRenderer(None).render(db, profile, time)
         pdfkit.from_string(html_string, output_path=self.outpath+'.pdf',
-                            configuration=config, options=options)
+                           configuration=config, options=options)
 
-        return self.outpath+'.pdf'                        
+        return self.outpath+'.pdf'
