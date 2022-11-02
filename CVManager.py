@@ -9,7 +9,7 @@ if len(sys.argv) != 2:
     print('Usage: CVManager.py PATH_TO_PROFILE')
     sys.exit()
 
-now = datetime.datetime.now(datetime.timezone.utc).isoformat()
+now = datetime.datetime.now(datetime.timezone.utc)
 
 profile = YamlDB(filename=sys.argv[1])
 db = YamlDB(filename=os.path.join(

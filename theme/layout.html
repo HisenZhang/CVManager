@@ -74,7 +74,8 @@
 
         <br>
 
-        <img src="data:image/png;base64,{{ img_string }}" width="80px" height="auto" style="float: left; margin: 2px; margin-right: 20px; margin-left: 0;">
+        <img src="data:image/png;base64,{{ img_string }}" 
+            width="80px" height="auto" style="float: left; margin: 2px; margin-right: 20px; margin-left: 0;">
 
         <p style="padding-left: 80px;">
             <span style="text-transform: uppercase">
@@ -83,7 +84,16 @@
             <span style="font-size:48px;">{{person.name.last[0]}}</span>
             <span style="font-size:40px;">{{person.name.last[1:]}}</span>
             </span>
-            <br>{{person.name.handle}} / {{person.name.call}} / {% if profile.email %}{{profile.email}}{% else %}{{person.email.work}}{% endif %}
+            <br>
+            <span>{{person.name.handle}} / </span>
+            <span>{{person.name.call}} / </span>
+            <span>
+                {% if profile.email %}
+                    {{profile.email}}
+                {% else %}
+                    {{person.email.work}}
+                {% endif %}
+            </span>
         </p>
 
 
@@ -102,7 +112,13 @@
                     </td>
                     <td valign="top">
                         <p>{{edu.concentration}}, {{edu.organization}}, {{edu.location}}</p>
-                        <p>{{edu.date}}</p>
+
+                        {% if utcnow.date() < edu.date %}
+                        <p>Expected {{edu.date.strftime("%b %Y")}}</p>
+                        {% else %}
+                        <p> {{edu.date.strftime("%b %Y")}}</p>
+                        {% endif %}
+
                         {% for h in edu.honors %}
                         <p>{{h}}</p>
                         {% endfor %}
@@ -134,7 +150,13 @@
                                     {% endif %}
                                 {% endfor %} 
                             </span>
-                            <span><i>"{{pub.title}}."</i> {{pub.publisher}}, {{pub.date}}.</span>
+                            <span><i>"{{pub.title}}."</i> {{pub.publisher}}, </span>
+                            <span>
+                                {% if utcnow.date() < pub.date %}
+                                forthcoming
+                                {% endif %}                                
+                                {{pub.date.strftime("%b %d, %Y")}}.
+                            </span>
                         </p>
                     </td>
                 </tr>
@@ -151,7 +173,15 @@
                 {% for research in exp.research %}
                 <tr>
                     <td valign="top" width="120px">
-                        <p><b>{{research.timeframe}}</b></p>
+                        <p>
+                            <b>
+                                {% if research.date.start and research.date.end %}
+                                    {{research.date.start.strftime("%Y")}}-{{research.date.end.strftime("%Y")}}
+                                {% elif research.date.start and not research.date.end %}
+                                    {{research.date.start.strftime("%Y")}}-present                               
+                                {% endif %}
+                            </b>
+                        </p>
                     </td>
                     <td valign="top">
                         <p>{{research.role}}, {{research.lab}}</p>
@@ -192,7 +222,15 @@
                 {% for service in exp.service %}
                 <tr>
                     <td valign="top" width="120px">
-                        <p><b>{{service.timeframe}}</b></p>
+                        <p>
+                            <b>
+                                {% if service.date.start and service.date.end %}
+                                    {{service.date.start.strftime("%Y")}}-{{service.date.end.strftime("%Y")}}
+                                {% elif service.date.start and not service.date.end %}
+                                    {{service.date.start.strftime("%Y")}}-present                               
+                                {% endif %}
+                            </b>
+                        </p>
                     </td>
                     <td valign="top">
                         <p>{{service.role}}, {{service.organization}}</p>
@@ -211,7 +249,7 @@
                 {% for pre in exp.presentation %}
                 <tr>
                     <td valign="top" width="80px">
-                        <p><b>{{pre.year}}</b></p>
+                        <p><b>{{pre.occasion[0].date.strftime("%Y")}}</b></p>
                     </td>
                     <td valign="top">
 
@@ -220,7 +258,15 @@
                         <p style="text-indent:-1.5em"><i>"{{pre.title}}."</i>
                             <ul>{% for case in pre.occasion %}
                                 <li>
-                                    <p>{{case.location}}. {{case.date}}.</p>
+                                    <p>
+                                        <span>{{case.location}}. </span>
+                                        <span>
+                                            {% if utcnow.date() < case.date %}
+                                                Forthcoming
+                                            {% endif %}                                
+                                            {{case.date.strftime("%b %d, %Y")}}.
+                                        </span>
+                                    </p>
                                 </li>
                                 {% endfor %}
                             </ul>
@@ -228,7 +274,16 @@
 
                         {% elif pre.occasion|length == 1 %}
 
-                        <p style="text-indent:-1.5em"><i>"{{pre.title}}."</i> {{pre.occasion[0].location}}. {{pre.occasion[0].date}}.</p>
+                        <p style="text-indent:-1.5em">
+                            <span><i>"{{pre.title}}."</i> </span>
+                            <span>{{pre.occasion[0].location}}. </span>
+                            <span>
+                                {% if utcnow.date() < pre.occasion[0].date %}
+                                    Forthcoming 
+                                {% endif %}
+                                {{pre.occasion[0].date.strftime("%b %d, %Y")}}.
+                            </span>
+                        </p>
 
                         {% endif %}
                     </td>
@@ -245,8 +300,16 @@
             <tbody>
                 {% for society in exp.societies %}
                 <tr>
-                    <td valign="top" width="50px">
-                        <p><b>{{society.year}}</b></p>
+                    <td valign="top" width="50px">                         
+                        <p>
+                            <b>
+                                {% if utcnow.date() < society.date %}
+                                    Pending
+                                {% else %}
+                                    {{society.date.strftime("%Y")}}
+                                {% endif %}
+                            </b>
+                        </p>
                     </td>
                     <td valign="top">
                         <p>{{society.organization}}</p>
@@ -269,11 +332,20 @@
                     {% if proj.priority <= profile.verbosity %}
                     <tr>
                         <td valign="top" width="50px">
-                            <p><b>{{proj.year}}</b></p>
+                            <p><b>{{proj.date.start.strftime("%Y")}}</b></p>
                         </td>
                         <td valign="top">
                             <p>
-                                <i>"{{proj.title}}."</i> {{proj.timeframe}}
+                                <span><i>"{{proj.title}}."</i> </span>
+                                <span>
+                                    {% if proj.date.start and proj.date.end %}
+                                        {{proj.date.start.strftime("%b %Y")}} - {{proj.date.end.strftime("%b %Y")}}.
+                                    {% elif proj.date.start and not proj.date.end %}
+                                        {{proj.date.start.strftime("%b %Y")}} - present.
+                                    {% elif not proj.date.start and proj.date.end %}
+                                        {{proj.date.end.strftime("%b %Y")}}.  
+                                    {% endif %}                                  
+                                </span>
                                 <ul>{% for digest in proj.digest %}
                                     <li>
                                         <p>{{digest}}</p>
@@ -303,7 +375,7 @@
                 {% for aff in exp.affiliation %}
                 <tr>
                     <td valign="top" width="50px">
-                        <p><b>{{aff.year}}</b></p>
+                        <p><b>{{aff.date.strftime("%Y")}}</b></p>
                     </td>
                     <td valign="top">
                         <p>{{aff.organization}}</p>
@@ -327,10 +399,10 @@
                     <td valign="top">
                         <p style="text-indent:-1.5em">
                             <span><i>"{{ cert.title }},"</i> {{ cert.issuer }}. </span>
-                            <span>Effective since {{ cert.date.effective }}. </span>
+                            <span>Effective since {{ cert.date.effective.strftime("%b %d, %Y") }}. </span>
                             {% if cert.date.expire %}
                             <span>
-                                Expiration date {{ cert.date.expire }}.
+                                Expiration date {{ cert.date.expire.strftime("%b %d, %Y") }}.
                             </span>
                             {% endif %}
                         </p>
@@ -347,7 +419,7 @@
 </body>
 <footer>
     <br>
-    <p style="text-align: center; font-size: 14px;"><i>- Last update {{ utcnow }} -</i></p>
+    <p style="text-align: center; font-size: 14px;"><i>- Last generated {{ utcnow.isoformat() }} -</i></p>
     <br>
 </footer>
 
