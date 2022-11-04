@@ -332,7 +332,15 @@
                     {% if proj.priority <= profile.verbosity %}
                     <tr>
                         <td valign="top" width="50px">
-                            <p><b>{{proj.date.start.strftime("%Y")}}</b></p>
+                            <p>
+                                <b>
+                                    {% if proj.date.start %}
+                                        {{proj.date.start.strftime("%Y")}}
+                                    {% else %}
+                                        {{proj.date.end.strftime("%Y")}}
+                                    {% endif %}
+                                </b>
+                            </p>
                         </td>
                         <td valign="top">
                             <p>
