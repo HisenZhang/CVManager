@@ -328,6 +328,7 @@
             <tbody>
                 {% for proj in exp.project.entries %}
                     {% if proj.priority <= profile.verbosity %}
+                    {% if not profile.tags or intersect(proj.tags,profile.tags) %}
                     <tr>
                         <td valign="top" width="50px">
                             <p>
@@ -367,6 +368,7 @@
 
                         </td>
                     </tr>
+                    {% endif %}
                     {% endif %}
                 {% endfor %}        
             </tbody>

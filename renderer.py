@@ -1,11 +1,10 @@
-from inspect import signature
 import jinja2
 import pdfkit
 import imgkit
 import os
 import sys
 import rsa
-from utility import img2b64
+from utility import img2b64, intersect
 import datetime
 
 
@@ -46,7 +45,7 @@ class BaseRenderer:
         return os.path.join(
             self.profile['output.path'],
             time_dir,
-            self.profile['output.filename'] + ' - ' + self.ts)
+            self.profile['output.title'] + ' - ' + self.ts)
 
     def render(self, data, path, time):
         pass
@@ -54,7 +53,7 @@ class BaseRenderer:
     def sign(self, document):
         if self.profile['input.privatekey']:
             with open(os.path.join(self.profile['input.path'],
-                        self.profile['input.privatekey']), mode='rb') as keyfile, \
+                                   self.profile['input.privatekey']), mode='rb') as keyfile, \
                     open(document, 'rb') as msgfile, \
                     open(document+'.sig', 'wb') as sigfile:
                 privkey = rsa.PrivateKey.load_pkcs1(keyfile.read())
@@ -73,6 +72,7 @@ class HTMLRenderer(BaseRenderer):
     def render(self, db, profile, time, file=True):
         template_loader = jinja2.FileSystemLoader(searchpath="./theme")
         template_env = jinja2.Environment(loader=template_loader)
+        template_env.globals.update(intersect=intersect)
         template_file = "layout.html"
         template = template_env.get_template(template_file)
         html_string = template.render(
