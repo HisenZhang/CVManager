@@ -32,7 +32,7 @@ class GoogleDriveDeployer(BaseDeployer):
         from pydrive.drive import GoogleDrive
 
         self.gauth = GoogleAuth()
-        cred_file = 'google_drive.cred'
+        cred_file = 'google_drive_secrets.json'
         if os.path.exists(cred_file):
             self.gauth.LoadCredentialsFile(cred_file)
         else:
@@ -51,7 +51,8 @@ class GoogleDriveDeployer(BaseDeployer):
 
         files = [type_path[t] for t in profile['deploy.GoogleDrive.type']]
         if self.profile['input.privatekey']:
-            files += [type_path[t]+'.sig' for t in profile['deploy.GoogleDrive.type']]
+            files += [type_path[t] +
+                      '.sig' for t in profile['deploy.GoogleDrive.type']]
         for filepath in files:
             filename = os.path.basename(filepath)
             f = self.drive.CreateFile({'title': filename,
