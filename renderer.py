@@ -1,8 +1,10 @@
+from inspect import signature
 import jinja2
 import pdfkit
 import imgkit
 import os
 import sys
+import rsa
 from utility import img2b64
 import datetime
 
@@ -12,47 +14,62 @@ class RendererFactory:
         self.profile = profile
         pass
 
-    def buildSubDir(self):
-        ts = datetime.datetime.today().isoformat().split('T')[0]
-        time_dir = ts + '-' + sys.argv[1].split('/')[-1].split('.')[0]
-        try:
-            os.mkdir(os.path.join(self.profile['output.path'], time_dir))
-        except FileExistsError:
-            pass
-        return os.path.join(
-            self.profile['output.path'], time_dir, self.profile['output.filename'] + ' - ' + ts)
-
     def createRenderers(self, outputTypes):
         if outputTypes is None:
             return None
-        outpath = self.buildSubDir()
         renderers = dict()
         for o in set(outputTypes):
             if 'HTML' == o:
-                renderers[o] = HTMLRenderer(outpath)
+                renderers[o] = HTMLRenderer(self.profile)
             elif 'PDF' == o:
-                renderers[o] = PDFRenderer(outpath)
+                renderers[o] = PDFRenderer(self.profile)
             elif 'PNG' == o:
-                renderers[o] = PNGRenderer(outpath)
+                renderers[o] = PNGRenderer(self.profile)
             else:
                 print('Unknown type ignored:', o)
         return renderers
 
 
 class BaseRenderer:
-    def __init__(self, outpath):
-        self.outpath = outpath
+    def __init__(self, profile):
+        self.ts = datetime.datetime.today().isoformat().split('T')[0]
+        self.profile = profile
+        self.outpath = self._buildSubDir()
         pass
+
+    def _buildSubDir(self):
+        time_dir = self.ts + '-' + sys.argv[1].split('/')[-1].split('.')[0]
+        try:
+            os.mkdir(os.path.join(self.profile['output.path'], time_dir))
+        except FileExistsError:
+            pass
+        return os.path.join(
+            self.profile['output.path'],
+            time_dir,
+            self.profile['output.filename'] + ' - ' + self.ts)
 
     def render(self, data, path, time):
         pass
 
+    def sign(self, document):
+        if self.profile['input.privatekeypath']:
+            with open(self.profile['input.privatekeypath'], mode='rb') as keyfile, \
+                    open(document, 'rb') as msgfile, \
+                    open(document+'.sig', 'wb') as sigfile:
+                privkey = rsa.PrivateKey.load_pkcs1(keyfile.read())
+                signature = rsa.sign(msgfile, privkey, 'SHA-256')
+                sigfile.write(signature)
+                return signature
+        else:
+            return None
+
 
 class HTMLRenderer(BaseRenderer):
-    def __init__(self, outpath):
-        super().__init__(outpath)
+    def __init__(self, profile):
+        super().__init__(profile)
+        self.outpath += '.html'
 
-    def render(self, db, profile, time):
+    def render(self, db, profile, time, file=True):
         template_loader = jinja2.FileSystemLoader(searchpath="./theme")
         template_env = jinja2.Environment(loader=template_loader)
         template_file = "layout.html"
@@ -65,23 +82,25 @@ class HTMLRenderer(BaseRenderer):
             img_string=img2b64(os.path.join(
                 profile['input.path'], profile['input.logo'])))
 
-        if self.outpath:
-            html_path = self.outpath+'.html'
+        if file:
+            html_path = self.outpath
             html_file = open(html_path, 'w')
             html_file.write(html_string)
             html_file.close()
+            self.sign(self.outpath)
 
-            return self.outpath+'.html'
+            return self.outpath
 
         else:
             return html_string
 
 
 class PNGRenderer(BaseRenderer):
-    def __init__(self, outpath):
-        super().__init__(outpath)
+    def __init__(self, profile):
+        super().__init__(profile)
+        self.outpath += '.png'
 
-    def render(self, db, profile, time):
+    def render(self, db, profile, time, file=True):
         path_to_wkhtmltoimg = r'C:\Program Files\wkhtmltopdf\bin\wkhtmltoimage.exe'
         config = imgkit.config(wkhtmltoimage=path_to_wkhtmltoimg)
         options = {
@@ -90,18 +109,22 @@ class PNGRenderer(BaseRenderer):
             'quiet': ''
         }
 
-        html_string = HTMLRenderer(None).render(db, profile, time)
-        imgkit.from_string(html_string, output_path=self.outpath+'.png',
+        html_string = HTMLRenderer(profile).render(db, profile, time, False)
+        imgkit.from_string(html_string, output_path=self.outpath,
                            config=config, options=options)
 
-        return self.outpath+'.pdf'
+        if file:
+            self.sign(self.outpath)
+
+        return self.outpath
 
 
 class PDFRenderer(BaseRenderer):
-    def __init__(self, outpath):
-        super().__init__(outpath)
+    def __init__(self, profile):
+        super().__init__(profile)
+        self.outpath += '.pdf'
 
-    def render(self, db, profile, time):
+    def render(self, db, profile, time, file=True):
         path_to_wkhtmltopdf = r'C:\Program Files\wkhtmltopdf\bin\wkhtmltopdf.exe'
         config = pdfkit.configuration(wkhtmltopdf=path_to_wkhtmltopdf)
         options = {
@@ -114,8 +137,11 @@ class PDFRenderer(BaseRenderer):
             "dpi": "300",
         }
 
-        html_string = HTMLRenderer(None).render(db, profile, time)
-        pdfkit.from_string(html_string, output_path=self.outpath+'.pdf',
+        html_string = HTMLRenderer(profile).render(db, profile, time, False)
+        pdfkit.from_string(html_string, output_path=self.outpath,
                            configuration=config, options=options)
 
-        return self.outpath+'.pdf'
+        if file:
+            self.sign(self.outpath)
+
+        return self.outpath
