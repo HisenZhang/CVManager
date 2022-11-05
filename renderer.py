@@ -38,7 +38,7 @@ class BaseRenderer:
         pass
 
     def _buildSubDir(self):
-        time_dir = self.ts + '-' + sys.argv[1].split('/')[-1].split('.')[0]
+        time_dir = self.ts + '-' + os.path.basename(sys.argv[1]).split('.')[0]
         try:
             os.mkdir(os.path.join(self.profile['output.path'], time_dir))
         except FileExistsError:
@@ -52,8 +52,9 @@ class BaseRenderer:
         pass
 
     def sign(self, document):
-        if self.profile['input.privatekeypath']:
-            with open(self.profile['input.privatekeypath'], mode='rb') as keyfile, \
+        if self.profile['input.privatekey']:
+            with open(os.path.join(self.profile['input.path'],
+                        self.profile['input.privatekey']), mode='rb') as keyfile, \
                     open(document, 'rb') as msgfile, \
                     open(document+'.sig', 'wb') as sigfile:
                 privkey = rsa.PrivateKey.load_pkcs1(keyfile.read())

@@ -50,9 +50,10 @@ class GoogleDriveDeployer(BaseDeployer):
     def deploy(self, profile, type_path):
 
         files = [type_path[t] for t in profile['deploy.GoogleDrive.type']]
-
+        if self.profile['input.privatekey']:
+            files += [type_path[t]+'.sig' for t in profile['deploy.GoogleDrive.type']]
         for filepath in files:
-            filename = filepath.split('\\')[-1]
+            filename = os.path.basename(filepath)
             f = self.drive.CreateFile({'title': filename,
                                        'parents': [{'id': profile['deploy.GoogleDrive.folder']}]})
             # Read file and set it as the content of this instance.

@@ -74,15 +74,13 @@
 
         <br>
 
-        <img src="data:image/png;base64,{{ img_string }}" 
+        <img src="data:image/png;base64,{{ img_string }}" alt="icon"
             width="80px" height="auto" style="float: left; margin: 2px; margin-right: 20px; margin-left: 0;">
 
         <p style="padding-left: 80px;">
             <span style="text-transform: uppercase">
-            <span style="font-size:48px;">{{person.name.first[0]}}</span>
-            <span style="font-size:40px;">{{person.name.first[1:]}}</span>
-            <span style="font-size:48px;">{{person.name.last[0]}}</span>
-            <span style="font-size:40px;">{{person.name.last[1:]}}</span>
+            <span style="font-size:48px;">{{person.name.first}} </span>
+            <span style="font-size:48px;">{{person.name.last}}</span>
             </span>
             <br>
             <span>{{person.name.handle}} / </span>
@@ -332,7 +330,15 @@
                     {% if proj.priority <= profile.verbosity %}
                     <tr>
                         <td valign="top" width="50px">
-                            <p><b>{{proj.date.start.strftime("%Y")}}</b></p>
+                            <p>
+                                <b>
+                                    {% if proj.date.start %}
+                                        {{proj.date.start.strftime("%Y")}}
+                                    {% else %}
+                                        {{proj.date.end.strftime("%Y")}}
+                                    {% endif %}
+                                </b>
+                            </p>
                         </td>
                         <td valign="top">
                             <p>
