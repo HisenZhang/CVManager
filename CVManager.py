@@ -28,5 +28,5 @@ deployers = DeployerFactory(profile).createDeployers(deployment)
 if deployers:
     for dest, deployer in deployers.items():
         deployer.trashOldFiles(
-            profile['deploy.GoogleDrive.folder'], profile['output.filename'])
+            profile['deploy.GoogleDrive.folder'], profile['output.title'])
         deployer.deploy(profile, type_path)
