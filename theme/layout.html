@@ -133,6 +133,7 @@
         <table>
             <tbody>
                 {% for pub in exp.publication %}
+                {% if (not profile.tags or intersect(pub.tags,profile.tags)) %}
                 <tr>
                     <td valign="top" width="75px">
                         <p>{{loop.revindex}}.</p>
@@ -158,6 +159,7 @@
                         </p>
                     </td>
                 </tr>
+                {% endif %}
                 {% endfor %}
             </tbody>
         </table>
@@ -169,6 +171,7 @@
         <table>
             <tbody>
                 {% for research in exp.research %}
+                {% if (not profile.tags or intersect(research.tags,profile.tags)) %}
                 <tr>
                     <td valign="top" width="120px">
                         <p>
@@ -187,6 +190,7 @@
                         <p>Supervised by {{research.supervisor}}</p>
                     </td>
                 </tr>
+                {% endif %}
                 {% endfor %}
             </tbody>
         </table>
@@ -218,6 +222,7 @@
         <table>
             <tbody>
                 {% for service in exp.service %}
+                {% if (not profile.tags or intersect(service.tags,profile.tags)) %}
                 <tr>
                     <td valign="top" width="120px">
                         <p>
@@ -234,6 +239,7 @@
                         <p>{{service.role}}, {{service.organization}}</p>
                     </td>
                 </tr>
+                {% endif %}
                 {% endfor %}
             </tbody>
         </table>
@@ -245,6 +251,7 @@
         <table>
             <tbody>
                 {% for pre in exp.presentation %}
+                {% if (not profile.tags or intersect(pre.tags,profile.tags)) %}
                 <tr>
                     <td valign="top" width="80px">
                         <p><b>{{pre.occasion[0].date.strftime("%Y")}}</b></p>
@@ -286,6 +293,7 @@
                         {% endif %}
                     </td>
                 </tr>
+                {% endif %}
                 {% endfor %}
             </tbody>
         </table>
@@ -297,6 +305,7 @@
         <table>
             <tbody>
                 {% for society in exp.societies %}
+                {% if (not profile.tags or intersect(society.tags,profile.tags)) %}
                 <tr>
                     <td valign="top" width="50px">                         
                         <p>
@@ -313,6 +322,7 @@
                         <p>{{society.organization}}</p>
                     </td>
                 </tr>
+                {% endif %}
                 {% endfor %}
             </tbody>
         </table>
@@ -327,8 +337,7 @@
         <table>
             <tbody>
                 {% for proj in exp.project.entries %}
-                    {% if proj.priority <= profile.verbosity %}
-                    {% if not profile.tags or intersect(proj.tags,profile.tags) %}
+                    {% if proj.priority <= profile.verbosity and (not profile.tags or intersect(proj.tags,profile.tags)) %}
                     <tr>
                         <td valign="top" width="50px">
                             <p>
@@ -369,7 +378,6 @@
                         </td>
                     </tr>
                     {% endif %}
-                    {% endif %}
                 {% endfor %}        
             </tbody>
         </table>
@@ -381,6 +389,7 @@
         <table>
             <tbody>
                 {% for aff in exp.affiliation %}
+                {% if (not profile.tags or intersect(aff.tags,profile.tags)) %}
                 <tr>
                     <td valign="top" width="50px">
                         <p><b>{{aff.date.strftime("%Y")}}</b></p>
@@ -389,6 +398,7 @@
                         <p>{{aff.organization}}</p>
                     </td>
                 </tr>
+                {% endif %}
                 {% endfor %}  
             </tbody>
         </table>
@@ -400,6 +410,7 @@
         <table>
             <tbody>
                 {% for cert in exp.certificate %}
+                {% if (not profile.tags or intersect(cert.tags,profile.tags)) %}
                 <tr>
                     <td valign="top" width="80px">
                         <p>{{ loop.revindex }}.</p>
@@ -416,6 +427,7 @@
                         </p>
                     </td>
                 </tr>
+                {% endif %}
                 {% endfor %}  
             </tbody>
         </table>
