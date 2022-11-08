@@ -20,6 +20,8 @@ python CVManager.py PATH_TO_PROFILE
 
 ## How Does It Work?
 
+![flowchart](https://i.imgur.com/M8NRPH4.png)
+
 There are three essential input files:
 
 1. Experience database. This yaml database keeps your experience.
