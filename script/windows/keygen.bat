@@ -1,4 +1,4 @@
 echo off
 set keyname=%1
-openssl genrsa -out %keyname%_key_private.pem
-openssl rsa -in %keyname%_key_private.pem -pubout -out %keyname%_key_public.pem
+openssl genrsa -out %keyname%_private.pem
+openssl rsa -in %keyname%_private.pem -pubout -out %keyname%_public.pem
