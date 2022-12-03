@@ -220,6 +220,38 @@
         </table>
         {% endif %}
         
+        {% if sec == 'work' %}
+        <h2>Work Experience</h2>
+
+        <table>
+            <tbody>
+                {% for work in exp.work %}
+                {% if (not profile.tags or intersect(work.tags,profile.tags)) %}
+                <tr>
+                    <td valign="top" width="120px">
+                        <p>
+                            <b>
+                                {% if work.date.start and work.date.end %}
+                                    {{work.date.start.strftime("%Y")}}-{{work.date.end.strftime("%Y")}}
+                                {% elif work.date.start and not work.date.end %}
+                                    {{work.date.start.strftime("%Y")}}-present                               
+                                {% endif %}
+                            </b>
+                        </p>
+                    </td>
+                    <td valign="top">
+                        <p>{{work.role}}, {{work.organization}}</p>
+                        {% if work.description %}
+                            <p><i>{{work.description}}</i></p>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endif %}
+                {% endfor %}
+            </tbody>
+        </table>
+        {% endif %}
+        
         {% if sec == 'teaching' %}
         <h2>Teaching Experience</h2>    
 
