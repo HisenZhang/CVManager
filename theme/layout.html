@@ -441,7 +441,11 @@
                     </td>
                     <td valign="top">
                         <p style="text-indent:-1.5em">
-                            <span><i>"{{ cert.title }},"</i> {{ cert.issuer }}. </span>
+                            {% if cert.title %}
+                                <span><i>"{{ cert.title }},"</i> {{ cert.issuer }}. </span>
+                            {% else %}
+                                <span>{{ cert.issuer }}. </span>
+                            {% endif %}
                             <span>Effective since {{ cert.date.effective.strftime("%b %d, %Y") }}. </span>
                             {% if cert.date.expire %}
                             <span>
